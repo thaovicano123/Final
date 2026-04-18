@@ -1,0 +1,29 @@
+VCD info: dumpfile results/phase2/tb_phase2_mmio_irq_gating.vcd opened for output.
+
+== Test Clock Gating ==
+[PASS] CMU_RESET_CLK_EN = 0x00000007
+[PASS] GCLK_UART_INITIAL toggle_count=40
+[PASS] GCLK_TIMER_INITIAL toggle_count=40
+[PASS] GCLK_GPIO_INITIAL toggle_count=40
+[PASS] GCLK_UART_DISABLED toggle_count=1
+[PASS] GCLK_TIMER_DISABLED toggle_count=0
+[PASS] GCLK_GPIO_DISABLED toggle_count=0
+[PASS] GCLK_UART_REENABLED toggle_count=39
+[PASS] GCLK_TIMER_STILL_OFF toggle_count=0
+[PASS] GCLK_GPIO_REENABLED toggle_count=40
+
+== Test MMIO: GPIO/UART ==
+[PASS] GPIO_DATA_OUT = 0x00000055
+[PASS] GPIO_TOGGLE = 0x0000005a
+[PASS] GPIO_DATA_IN = 0xa5a55a5a
+A[PASS] UART_TXDATA_LOOPBACK = 0x00000041
+
+== Test Timer IRQ ==
+[PASS] TIMER_IRQ asserted
+[PASS] TIMER_IRQ_STATUS_BIT = 0x00000001
+[PASS] TIMER_IRQ cleared
+
+========================================
+PHASE2 TESTBENCH RESULT: PASS
+========================================
+tb/tb_phase2_mmio_irq_gating.v:356: $finish called at 2785000 (1ps)
