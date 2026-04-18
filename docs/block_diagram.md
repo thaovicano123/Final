@@ -29,7 +29,7 @@ flowchart LR
     CMU -->|gated clk| TIMER
     CMU -->|gated clk| GPIO
 
-    TIMER -->|irq[0]| CPU
+    TIMER -->|irq0| CPU
     RST --> CPU
     RST --> CMU
     RST --> DEC
