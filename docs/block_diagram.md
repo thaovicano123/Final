@@ -2,15 +2,15 @@
 
 ```mermaid
 flowchart LR
-    CPU[PicoRV32 Core]\nNative Memory IF
+    CPU["PicoRV32 Core<br/>Native Memory IF"]
     DEC[Address Decoder / Interconnect]
 
-    ROM[ROM\n0x0000_0000]
-    RAM[RAM\n0x1000_0000]
-    UART[UART MMIO\n0x2000_0000]
-    TIMER[Timer MMIO\n0x2000_1000]
-    GPIO[GPIO MMIO\n0x2000_2000]
-    CMU[CMU + ICG\n0x2000_3000]
+    ROM["ROM<br/>0x0000_0000"]
+    RAM["RAM<br/>0x1000_0000"]
+    UART["UART MMIO<br/>0x2000_0000"]
+    TIMER["Timer MMIO<br/>0x2000_1000"]
+    GPIO["GPIO MMIO<br/>0x2000_2000"]
+    CMU["CMU + ICG<br/>0x2000_3000"]
 
     CLK[clk]
     RST[resetn]
