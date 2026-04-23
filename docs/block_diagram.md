@@ -5,8 +5,8 @@ flowchart LR
     CPU["PicoRV32 Core<br/>Native Memory IF"]
     DEC[Address Decoder / Interconnect]
 
-    ROM["ROM<br/>0x0000_0000"]
-    RAM["RAM<br/>0x1000_0000"]
+    ROM["Inferred ROM<br/>0x0000_0000"]
+    RAM["Inferred RAM<br/>0x1000_0000"]
     UART["UART MMIO<br/>0x2000_0000"]
     TIMER["Timer MMIO<br/>0x2000_1000"]
     GPIO["GPIO MMIO<br/>0x2000_2000"]
@@ -25,6 +25,7 @@ flowchart LR
 
     CLK --> CPU
     CLK --> CMU
+    CLK --> RAM
     CMU -->|gated clk| UART
     CMU -->|gated clk| TIMER
     CMU -->|gated clk| GPIO
@@ -32,8 +33,6 @@ flowchart LR
     TIMER -->|irq0| CPU
     RST --> CPU
     RST --> CMU
-    RST --> DEC
-    RST --> ROM
     RST --> RAM
     RST --> UART
     RST --> TIMER
