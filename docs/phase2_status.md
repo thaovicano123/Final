@@ -24,6 +24,12 @@
 - `docs/block_diagram.md`
 - `docs/address_map.md`
 - `docs/clock_gating_policy.md`
+- `docs/memory_model_strategy.md`
+
+## Memory implementation choice
+1. ROM/RAM are implemented as inferred memory models (`rtl/soc_rom.v`, `rtl/soc_ram.v`).
+2. This choice is intentional for academic RTL verification where enterprise memory macros are unavailable.
+3. Wrapper interfaces are macro-ready to support later replacement in ASIC flow.
 
 ## What is completed vs. phase-2 tasks
 1. Block diagram: completed

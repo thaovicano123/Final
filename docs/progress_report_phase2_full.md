@@ -47,6 +47,11 @@ Kết quả:
 - Timer có khả năng tạo IRQ và clear pending.
 - CMU có thể bật/tắt clock ngoại vi theo thanh ghi điều khiển.
 
+Ghi chú triển khai bộ nhớ:
+- ROM/RAM được triển khai dưới dạng inferred memory models (wrapper học thuật), không dùng macro doanh nghiệp.
+- Cách làm này đảm bảo kiểm chứng chức năng end-to-end trong điều kiện đồ án.
+- Interface wrapper được giữ ổn định để thay bằng memory macro ở giai đoạn ASIC enterprise.
+
 ### 2.3. Xây dựng quy trình kiểm chứng tự động
 Đã xây dựng bộ script/testbench để verify nhiều lớp:
 
@@ -148,6 +153,12 @@ Giải thích cách tính:
 1. Số liệu hiện tại là switching activity (mức chuyển mạch tín hiệu clock) trong mô phỏng RTL.
 2. Đây là bằng chứng định lượng cho hiệu quả cơ chế clock gating ở mức hành vi số.
 3. Chưa phải số liệu công suất vật lý (mW/uW) ở mức ASIC; phần đó cần synthesis và power report trong Giai đoạn 4.
+4. ROM/RAM hiện là inferred models nên timing/area/power chưa đại diện cho macro bộ nhớ của công nghệ đích.
+
+### 5.4. Khẳng định phạm vi hợp lệ của kiểm chứng bộ nhớ
+1. Hợp lệ trong phạm vi đồ án: kiểm chứng chức năng CPU-memory-MMIO-IRQ ở mức RTL.
+2. Chưa phải sign-off silicon memory: cần thay wrapper bằng macro thực trong flow doanh nghiệp.
+3. Chiến lược thay thế đã được tài liệu hóa tại [docs/memory_model_strategy.md](docs/memory_model_strategy.md).
 
 ## 6. Rủi ro còn lại và biện pháp giảm rủi ro
 1. Chưa chạy synthesis/power report trong giai đoạn này.

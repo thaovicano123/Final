@@ -2,12 +2,16 @@
 
 | Region | Base Address | Size | Description |
 |---|---:|---:|---|
-| ROM | `0x0000_0000` | 64 KB | Instruction/data read memory (firmware image) |
-| RAM | `0x1000_0000` | 64 KB | Data memory |
+| ROM | `0x0000_0000` | 64 KB | Inferred ROM model (firmware image preload) |
+| RAM | `0x1000_0000` | 64 KB | Inferred RAM model (byte-write data memory) |
 | UART | `0x2000_0000` | 4 KB | UART MMIO registers |
 | Timer | `0x2000_1000` | 4 KB | Timer MMIO registers |
 | GPIO | `0x2000_2000` | 4 KB | GPIO MMIO registers |
 | CMU | `0x2000_3000` | 4 KB | Clock management + clock gating control |
+
+## Memory implementation note
+- Current ROM/RAM are inferred memory wrappers for academic RTL verification.
+- In enterprise ASIC flow, these wrappers are intended to be replaced with foundry memory macros.
 
 ## Peripheral register map (initial)
 

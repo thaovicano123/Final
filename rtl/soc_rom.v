@@ -1,6 +1,7 @@
 module soc_rom #(
     parameter MEMFILE    = "",
-    parameter ADDR_WIDTH = 14
+    parameter ADDR_WIDTH = 14,
+    parameter INIT_NOP   = 1
 ) (
     input  wire        valid,
     input  wire [31:0] addr,
@@ -16,10 +17,14 @@ module soc_rom #(
     assign ready = valid;
     assign rdata = mem[word_addr];
 
+    // Inferred ROM model for academic/project use.
+    // This wrapper can be replaced by a foundry ROM macro in ASIC flow.
     integer i;
     initial begin
-        for (i = 0; i < DEPTH; i = i + 1)
-            mem[i] = 32'h0000_0013; // NOP (addi x0, x0, 0)
+        if (INIT_NOP) begin
+            for (i = 0; i < DEPTH; i = i + 1)
+                mem[i] = 32'h0000_0013; // NOP (addi x0, x0, 0)
+        end
 
         if (MEMFILE != "")
             $readmemh(MEMFILE, mem);

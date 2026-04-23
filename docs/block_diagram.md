@@ -42,5 +42,6 @@ flowchart LR
 
 ## Integration notes
 - Native PicoRV32 memory interface is used for simpler student-friendly integration.
+- ROM/RAM blocks are implemented as inferred memory models in this project flow.
 - CMU is always on root clock so clock gating control registers stay accessible.
 - UART/Timer/GPIO run on gated clocks from CMU ICG outputs.

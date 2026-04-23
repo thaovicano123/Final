@@ -1,5 +1,6 @@
 module soc_ram #(
-    parameter ADDR_WIDTH = 14
+    parameter ADDR_WIDTH = 14,
+    parameter INIT_ZERO  = 1
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -16,6 +17,8 @@ module soc_ram #(
 
     wire [ADDR_WIDTH-1:0] word_addr = addr[ADDR_WIDTH+1:2];
 
+    // Inferred SRAM model for academic/project use.
+    // Interface is kept macro-friendly for later ASIC memory replacement.
     assign ready = valid;
     assign rdata = mem[word_addr];
 
@@ -28,9 +31,18 @@ module soc_ram #(
         end
     end
 
+    // NOTE:
+    // Do not clear full RAM on reset in synthesizable logic.
+    // Large reset loops are not representative of SRAM macro behavior.
+    // Optional initialization below is for simulation convenience only.
     integer i;
-    always @(negedge resetn) begin
-        for (i = 0; i < DEPTH; i = i + 1)
-            mem[i] <= 32'h0000_0000;
+    initial begin
+        if (INIT_ZERO) begin
+            for (i = 0; i < DEPTH; i = i + 1)
+                mem[i] = 32'h0000_0000;
+        end
     end
+
+    // Keep reset pin for interface compatibility with future SRAM macro wrappers.
+    wire _unused_resetn = resetn;
 endmodule
