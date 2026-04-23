@@ -1,4 +1,4 @@
 VCD info: dumpfile results/phase2/tb_soc_top_smoke.vcd opened for output.
-SoC Phase2 CPU smoke
+Phase3 firmware smoke
 ...SOC_TOP_SMOKE: PASS (GPIO activity observed)
 tb/tb_soc_top_smoke.v:59: $finish called at 1200075000 (1ps)
