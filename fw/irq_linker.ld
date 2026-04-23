@@ -24,13 +24,18 @@ SECTIONS
     *(.rodata*)
   } > ROM
 
+  _sidata = LOADADDR(.data);
   .data : {
+    _sdata = .;
     *(.data*)
+    _edata = .;
   } > RAM AT > ROM
 
-  .bss : {
+  .bss (NOLOAD) : {
+    _sbss = .;
     *(.bss*)
     *(COMMON)
+    _ebss = .;
   } > RAM
 
   . = ALIGN(16);
