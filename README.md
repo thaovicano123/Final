@@ -34,3 +34,9 @@ See details in:
 - This generates two synthesis results:
 	- with inferred ROM/RAM included
 	- with ROM/RAM blackboxed (logic-focused comparison)
+
+## Firmware verification (Phase 3)
+- Firmware-focused function checks:
+	- `./scripts/run_phase3_firmware_focus_tb.sh`
+- Firmware-driven clock-gating waveform checks:
+	- `./scripts/run_phase3_fw_clock_gating_tb.sh`

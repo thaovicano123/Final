@@ -13,6 +13,11 @@
 4. Firmware-focused Phase 3 testbench and run script:
    - `tb/tb_phase3_firmware_focus.v`
    - `scripts/run_phase3_firmware_focus_tb.sh`
+5. Firmware-driven clock-gating testbench and run script:
+   - `tb/tb_phase3_fw_clock_gating.v`
+   - `scripts/run_phase3_fw_clock_gating_tb.sh`
+   - `fw/main_gating.c`
+   - `scripts/build_fw_gating.sh`
 
 ## Firmware precision hardening (updated)
 1. Startup now performs deterministic C runtime initialization:
@@ -54,6 +59,27 @@ Automatically checked items:
 
 Current result:
 - `PHASE3_FIRMWARE_FOCUS: PASS`
+
+## Clock-gating evidence at firmware level (new)
+Run command:
+- `./scripts/run_phase3_fw_clock_gating_tb.sh`
+
+Automatically checked items:
+1. Firmware drives CMU states through 3 phases:
+   - Phase A: `clk_en = 3'b111`
+   - Phase B: `clk_en = 3'b000`
+   - Phase C: `clk_en = 3'b100`
+2. Gated-clock behavior from waveform/toggle counters:
+   - Phase B: all peripheral gated clocks stop
+   - Phase C: only GPIO gated clock resumes (UART/TIMER remain gated)
+3. Functional effect on firmware activity:
+   - GPIO foreground toggles pause in Phase B and resume in Phase C
+
+Current result:
+- `PHASE3_FW_CLOCK_GATING: PASS`
+- Artifacts:
+  - `results/phase3/tb_phase3_fw_clock_gating.log`
+  - `results/phase3/tb_phase3_fw_clock_gating.vcd`
 
 ## Why this matters
 - Confirms end-to-end firmware-driven IRQ operation (not only peripheral-level TB stimulus).
