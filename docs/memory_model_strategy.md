@@ -3,6 +3,10 @@
 ## Decision
 This project uses inferred memory models for ROM and RAM instead of enterprise memory compiler macros.
 
+Selected for Phase 4 power methodology:
+- Simulation: inferred memory models (`soc_rom`, `soc_ram`) are used for full functional verification.
+- Synthesis/power comparison: memory is treated as blackbox to isolate logic-domain optimization impact.
+
 ## Why this is suitable for this project
 1. The project objective is functional SoC integration and low-power behavior verification at RTL.
 2. Access to foundry memory macros/compilers is typically limited in student environments.
@@ -27,3 +31,9 @@ This project uses inferred memory models for ROM and RAM instead of enterprise m
 1. Keep bus-level interface unchanged in `soc_top`.
 2. Replace internals of `soc_rom` / `soc_ram` wrappers with macro instantiation.
 3. Re-run synthesis and power analysis for final ASIC numbers.
+
+## Blackbox synthesis flow (selected)
+1. Blackbox stubs are defined in `syn/mem_blackbox_cells.v`.
+2. Full synthesis script: `syn/yosys_with_memory.ys`.
+3. Logic-only synthesis script: `syn/yosys_blackbox_memory.ys`.
+4. One-command runner: `scripts/run_synth_compare.sh`.

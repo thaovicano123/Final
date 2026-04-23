@@ -18,6 +18,19 @@ Gate-level synthesis reports with and without clock gating, and quantified power
    - timing.rpt
 5. Compare dynamic and leakage power
 
+## Memory scope decision for this project
+1. Chosen method: blackbox ROM/RAM in synthesis runs for logic-domain comparison.
+2. Functional simulation still uses inferred memory wrappers for firmware execution.
+3. This keeps power comparison focused on CPU + interconnect + gated peripherals.
+
+## Execution commands (Yosys)
+1. `./scripts/run_synth_compare.sh`
+2. Outputs:
+   - `results/syn/with_memory/stat.txt`
+   - `results/syn/blackbox_memory/stat.txt`
+   - `results/syn/with_memory/yosys.log`
+   - `results/syn/blackbox_memory/yosys.log`
+
 ## Exit criteria
 - Both synthesis runs complete
 - Reports are archived in `results/`

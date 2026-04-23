@@ -27,3 +27,10 @@ See details in:
 - `docs/checklists/week1.md`
 - `scripts/setup_ubuntu_tools.sh`
 - `scripts/run_picorv32_smoketest.sh`
+
+## Synthesis compare (Phase 4)
+- Install Yosys.
+- Run: `./scripts/run_synth_compare.sh`
+- This generates two synthesis results:
+	- with inferred ROM/RAM included
+	- with ROM/RAM blackboxed (logic-focused comparison)
