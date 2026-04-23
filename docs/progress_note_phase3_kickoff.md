@@ -10,6 +10,9 @@
 3. SoC IRQ testbench and run script:
    - `tb/tb_soc_top_irq.v`
    - `scripts/run_phase3_irq_tb.sh`
+4. Firmware-focused Phase 3 testbench and run script:
+   - `tb/tb_phase3_firmware_focus.v`
+   - `scripts/run_phase3_firmware_focus_tb.sh`
 
 ## Firmware precision hardening (updated)
 1. Startup now performs deterministic C runtime initialization:
@@ -37,6 +40,20 @@
 Additional evidence:
 - `fw/firmware_irq.map` confirms `_start=0x00000000`, `irq_vec=0x00000010`, `_boot=0x00000070`.
 - `./scripts/run_soc_top_smoke.sh` PASS with UART banner `Phase3 firmware smoke`.
+
+## Firmware-focused automated criteria (new)
+Run command:
+- `./scripts/run_phase3_firmware_focus_tb.sh`
+
+Automatically checked items:
+1. Timer configuration register correctness (`LOAD=2000`, `CTRL=0x7`).
+2. IRQ servicing evidence from RAM variable (`irq_count`) increasing.
+3. Foreground/background behavior split on GPIO:
+   - foreground: `gpio_out[0]` toggles from main loop
+   - background: `gpio_out[8]` toggles from IRQ handler
+
+Current result:
+- `PHASE3_FIRMWARE_FOCUS: PASS`
 
 ## Why this matters
 - Confirms end-to-end firmware-driven IRQ operation (not only peripheral-level TB stimulus).

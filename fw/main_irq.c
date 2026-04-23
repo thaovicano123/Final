@@ -57,8 +57,8 @@ int main(void)
     uart_puts("Phase3 IRQ demo\n");
 
     // Timer periodic IRQ setup.
-    mmio_write(TIMER_BASE + TIMER_LOAD, 50u);
-    mmio_write(TIMER_BASE + TIMER_VALUE, 50u);
+    mmio_write(TIMER_BASE + TIMER_LOAD, 2000u);
+    mmio_write(TIMER_BASE + TIMER_VALUE, 2000u);
     mmio_write(TIMER_BASE + TIMER_IRQCLR, 1u);    // clear pending
     mmio_write(TIMER_BASE + TIMER_CTRL, 0x00000007u); // enable + irq_en + periodic
 
