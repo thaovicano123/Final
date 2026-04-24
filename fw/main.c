@@ -1,15 +1,15 @@
 #include <stdint.h>
 
 #define UART_BASE   0x20000000u
-#define TIMER_BASE  0x20001000u
+#define SPI_BASE    0x20001000u
 #define GPIO_BASE   0x20002000u
 #define CMU_BASE    0x20003000u
 
 #define UART_TXDATA   0x00u
 
-#define TIMER_LOAD    0x00u
-#define TIMER_VALUE   0x04u
-#define TIMER_CTRL    0x08u
+#define SPI_CTRL      0x00u
+#define SPI_DIV       0x04u
+#define SPI_TXDATA    0x08u
 
 #define GPIO_DATA_OUT 0x00u
 #define GPIO_DATA_IN  0x04u
@@ -44,7 +44,7 @@ int main(void)
 {
     volatile uint32_t i;
 
-    // Enable all peripheral gated clocks: UART, TIMER, GPIO.
+    // Enable all peripheral gated clocks: UART, SPI, GPIO.
     mmio_write(CMU_BASE + CMU_CLK_EN, 0x00000007u);
 
     uart_puts("Phase3 firmware smoke\n");
@@ -53,14 +53,14 @@ int main(void)
     mmio_write(GPIO_BASE + GPIO_DIR, 0x000000FFu);
     mmio_write(GPIO_BASE + GPIO_DATA_OUT, 0x00000055u);
 
-    // Configure timer in free-running mode, IRQ disabled in smoke firmware.
-    mmio_write(TIMER_BASE + TIMER_LOAD, 500u);
-    mmio_write(TIMER_BASE + TIMER_VALUE, 500u);
-    mmio_write(TIMER_BASE + TIMER_CTRL, 0x00000001u); // enable only
+    // Configure SPI master (enable + CS enable), no IRQ in smoke firmware.
+    mmio_write(SPI_BASE + SPI_DIV, 2u);
+    mmio_write(SPI_BASE + SPI_CTRL, 0x00000021u);
 
     while (1) {
         mmio_write(GPIO_BASE + GPIO_TOGGLE, 0x000000FFu); // toggle low byte
         uart_putc('.');
+        mmio_write(SPI_BASE + SPI_TXDATA, 0x000000A5u);
         for (i = 0; i < 2000u; i++) {
             (void)mmio_read(GPIO_BASE + GPIO_DATA_IN);
         }

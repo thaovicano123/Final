@@ -5,7 +5,7 @@
 | ROM | `0x0000_0000` | 64 KB | Inferred ROM model (firmware image preload) |
 | RAM | `0x1000_0000` | 64 KB | Inferred RAM model (byte-write data memory) |
 | UART | `0x2000_0000` | 4 KB | UART MMIO registers |
-| Timer | `0x2000_1000` | 4 KB | Timer MMIO registers |
+| SPI | `0x2000_1000` | 4 KB | SPI MMIO registers |
 | GPIO | `0x2000_2000` | 4 KB | GPIO MMIO registers |
 | CMU | `0x2000_3000` | 4 KB | Clock management + clock gating control |
 
@@ -19,11 +19,12 @@
 - `0x00` TXDATA (W): write byte to transmit/debug print
 - `0x04` STATUS (R): bit0 = tx_ready (always 1 in current model)
 
-### Timer (`0x2000_1000`)
-- `0x00` LOAD (RW): reload value
-- `0x04` VALUE (R): current counter value
-- `0x08` CTRL (RW): bit0=enable, bit1=irq_en, bit2=periodic
-- `0x0C` IRQ_STATUS (RW1C): bit0 pending
+### SPI (`0x2000_1000`)
+- `0x00` CTRL (RW): bit0=enable, bit1=irq_en, bit2=cpol, bit3=cpha, bit4=lsb_first, bit5=cs_en
+- `0x04` DIV (RW): clock divider (lower 8 bits)
+- `0x08` TXDATA (W/R): write starts transfer, read returns last TX byte
+- `0x0C` RXDATA (R): last received byte
+- `0x10` STATUS (RW1C): bit0=busy, bit1=rx_valid, bit2=irq_pending, bit3=cs_active
 
 ### GPIO (`0x2000_2000`)
 - `0x00` DATA_OUT (RW)
@@ -32,5 +33,5 @@
 - `0x0C` TOGGLE (W): toggle selected output bits
 
 ### CMU (`0x2000_3000`)
-- `0x00` CLK_EN (RW): bit0=UART, bit1=TIMER, bit2=GPIO
+- `0x00` CLK_EN (RW): bit0=UART, bit1=SPI, bit2=GPIO
 - `0x04` CLK_STAT (R): latched enables (same as CLK_EN in this model)

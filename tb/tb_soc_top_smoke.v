@@ -7,6 +7,10 @@ module tb_soc_top_smoke;
     reg [31:0] gpio_in;
     wire uart_tx;
     wire [31:0] gpio_out;
+    wire spi_sclk;
+    wire spi_mosi;
+    wire spi_miso;
+    wire spi_cs_n;
 
     integer cycles;
     reg seen_gpio_change;
@@ -19,6 +23,10 @@ module tb_soc_top_smoke;
         .resetn(resetn),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx),
+        .spi_sclk(spi_sclk),
+        .spi_mosi(spi_mosi),
+        .spi_miso(spi_miso),
+        .spi_cs_n(spi_cs_n),
         .gpio_in(gpio_in),
         .gpio_out(gpio_out)
     );
@@ -30,6 +38,7 @@ module tb_soc_top_smoke;
         resetn = 1'b0;
         uart_rx = 1'b1;
         gpio_in = 32'hDEAD_BEEF;
+        force spi_miso = 1'b0;
         cycles = 0;
         seen_gpio_change = 1'b0;
         last_gpio_out = 32'h0;

@@ -2,7 +2,7 @@
 # This reflects full RTL cell mapping, including memory wrappers.
 
 read_verilog third_party/picorv32/picorv32.v
-read_verilog rtl/icg_cell.v rtl/cmu.v rtl/bus_decoder.v rtl/uart_mmio.v rtl/timer_mmio.v rtl/gpio_mmio.v rtl/soc_rom.v rtl/soc_ram.v rtl/soc_top.v
+read_verilog rtl/icg_cell.v rtl/cmu.v rtl/bus_decoder.v rtl/uart_mmio.v rtl/spi_mmio.v rtl/gpio_mmio.v rtl/soc_rom.v rtl/soc_ram.v rtl/soc_top.v
 
 hierarchy -check -top soc_top
 proc

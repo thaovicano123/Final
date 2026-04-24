@@ -6,12 +6,12 @@
 **Ngày cập nhật:** 18/04/2026
 
 ## 1. Mục tiêu giai đoạn
-Giai đoạn 2 đặt mục tiêu xây dựng một hệ thống phần cứng hoàn chỉnh ở mức RTL, trong đó CPU PicoRV32 kết nối và giao tiếp được với các ngoại vi cơ bản (ROM, RAM, UART, Timer, GPIO), đồng thời tích hợp cơ chế low-power bằng clock gating cho các ngoại vi.
+Giai đoạn 2 đặt mục tiêu xây dựng một hệ thống phần cứng hoàn chỉnh ở mức RTL, trong đó CPU PicoRV32 kết nối và giao tiếp được với các ngoại vi cơ bản (ROM, RAM, UART, SPI, GPIO), đồng thời tích hợp cơ chế low-power bằng clock gating cho các ngoại vi.
 
 Mục tiêu cụ thể gồm:
 1. Hoàn thiện kiến trúc SoC và sơ đồ khối.
 2. Thiết kế bus/interconnect đơn giản dựa trên address decoder.
-3. Tích hợp module quản lý clock (CMU) và cổng ICG cho UART/Timer/GPIO.
+3. Tích hợp module quản lý clock (CMU) và cổng ICG cho UART/SPI/GPIO.
 4. Hoàn thiện top-level wrapper và kiểm chứng mô phỏng.
 
 ## 2. Phạm vi công việc đã thực hiện
@@ -39,12 +39,12 @@ Kết quả:
    - [rtl/soc_ram.v](rtl/soc_ram.v)
 5. Ngoại vi MMIO:
    - [rtl/uart_mmio.v](rtl/uart_mmio.v)
-   - [rtl/timer_mmio.v](rtl/timer_mmio.v)
+   - [rtl/spi_mmio.v](rtl/spi_mmio.v)
    - [rtl/gpio_mmio.v](rtl/gpio_mmio.v)
 
 Kết quả:
 - Hệ thống có thể định tuyến đúng truy cập bộ nhớ/ngoại vi theo địa chỉ.
-- Timer có khả năng tạo IRQ và clear pending.
+- SPI có khả năng tạo IRQ và clear pending.
 - CMU có thể bật/tắt clock ngoại vi theo thanh ghi điều khiển.
 
 Ghi chú triển khai bộ nhớ:
@@ -58,7 +58,7 @@ Ghi chú triển khai bộ nhớ:
 1. RTL compile check:
 - Script: [scripts/check_phase2_rtl.sh](scripts/check_phase2_rtl.sh)
 
-2. Testbench ngoại vi (MMIO + Timer IRQ + Clock Gating):
+2. Testbench ngoại vi (MMIO + SPI IRQ + Clock Gating):
 - Testbench: [tb/tb_phase2_mmio_irq_gating.v](tb/tb_phase2_mmio_irq_gating.v)
 - Script chạy: [scripts/run_phase2_tb.sh](scripts/run_phase2_tb.sh)
 - Log PASS: [results/phase2/tb_phase2_mmio_irq_gating.log](results/phase2/tb_phase2_mmio_irq_gating.log)
@@ -131,7 +131,7 @@ Kết quả đo:
 | Tín hiệu | Toggle khi enable ban đầu | Toggle khi disable | Mức giảm switching |
 |---|---:|---:|---:|
 | GCLK_UART | 40 | 1 | 97.5% |
-| GCLK_TIMER | 40 | 0 | 100% |
+| GCLK_SPI | 40 | 0 | 100% |
 | GCLK_GPIO | 40 | 0 | 100% |
 
 Giải thích cách tính:
@@ -139,9 +139,9 @@ Giải thích cách tính:
 - Ví dụ UART: `(40 - 1) / 40 = 97.5%`.
 
 Ý nghĩa kỹ thuật:
-1. Khi tắt gate, hoạt động chuyển mạch clock của Timer/GPIO về 0 trong cửa sổ đo, cho thấy clock đã bị cắt đúng chức năng.
+1. Khi tắt gate, hoạt động chuyển mạch clock của SPI/GPIO về 0 trong cửa sổ đo, cho thấy clock đã bị cắt đúng chức năng.
 2. UART còn 1 toggle ở thời điểm chuyển trạng thái enable->disable (biên chuyển tiếp hợp lệ), không phải dao động duy trì.
-3. Sau khi re-enable, các clock hoạt động trở lại đúng kỳ vọng (UART/GPIO có toggle, Timer giữ off khi chưa bật lại), chứng minh cơ chế điều khiển gate là ổn định và có chọn lọc.
+3. Sau khi re-enable, các clock hoạt động trở lại đúng kỳ vọng (UART/GPIO có toggle, SPI giữ off khi chưa bật lại), chứng minh cơ chế điều khiển gate là ổn định và có chọn lọc.
 
 ### 5.2. Kết quả kiểm chứng chức năng liên quan
 1. Testbench MMIO + gating + IRQ: PASS.
@@ -171,7 +171,7 @@ Giải thích cách tính:
 - Biện pháp: thêm bước lint tự động trước synthesis.
 
 ## 7. Kế hoạch tuần tiếp theo
-1. Hoàn thiện firmware Giai đoạn 3 theo kịch bản đề bài (UART hello, GPIO control, timer interrupt flow rõ ràng hơn).
+1. Hoàn thiện firmware Giai đoạn 3 theo kịch bản đề bài (UART hello, GPIO control, SPI interrupt flow rõ ràng hơn).
 2. Hoàn thiện testbench hệ thống có đo/ghi chỉ số hành vi low-power từ waveform.
 3. Chuẩn bị script synthesis baseline để mở đầu Giai đoạn 4.
 4. Tạo verification matrix và phụ lục bằng chứng để nộp giáo viên.

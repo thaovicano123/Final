@@ -7,7 +7,7 @@ Firmware drives SoC functions and verifies low-power behavior in simulation.
 1. Write C firmware:
    - UART init and hello print
    - GPIO toggle
-   - timer interrupt configuration
+   - spi interrupt configuration
 2. Build firmware to `.hex`
 3. Write SoC testbench:
    - clock/reset generation
@@ -19,5 +19,5 @@ Firmware drives SoC functions and verifies low-power behavior in simulation.
 
 ## Exit criteria
 - Hello output is visible in simulation log/UART model
-- GPIO/timer behavior matches expectation
+- GPIO/SPI behavior matches expectation
 - Waveform evidence for clock gating is captured

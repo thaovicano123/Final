@@ -1,0 +1,26 @@
+DESIGN_NAME: soc_top_asic
+VERILOG_FILES:
+  - dir::third_party/picorv32/picorv32.v
+  - dir::rtl/icg_cell.v
+  - dir::rtl/cmu.v
+  - dir::rtl/bus_decoder.v
+  - dir::rtl/uart_mmio.v
+  - dir::rtl/spi_mmio.v
+  - dir::rtl/gpio_mmio.v
+  - dir::rtl/soc_rom.v
+  - dir::rtl/soc_ram.v
+  - dir::rtl/soc_top_asic.v
+
+CLOCK_PORT: clk
+CLOCK_PERIOD: 50
+
+RUN_LINTER: false
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 3000, 3000]
+CORE_AREA: [20, 20, 2980, 2980]
+FP_CORE_UTIL: 15
+PL_TARGET_DENSITY: 0.25
+
+pdk::sky130*:
+  CLOCK_PERIOD: 50
+  FP_CORE_UTIL: 15

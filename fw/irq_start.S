@@ -57,9 +57,9 @@ irq_vec:
     li t1, 0x00000100
     sw t1, 0(t0)
 
-    // Clear timer pending (W1C).
-    li t0, 0x2000100c
-    li t1, 0x00000001
+    // Clear SPI pending (W1C).
+    li t0, 0x20001010
+    li t1, 0x00000004
     sw t1, 0(t0)
 
     // Increment irq_count in RAM.

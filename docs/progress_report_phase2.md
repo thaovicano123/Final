@@ -5,9 +5,9 @@
 **Ngày báo cáo:** 18/04/2026
 
 ## 1. Mục tiêu
-1. Hoàn thiện kiến trúc SoC gồm PicoRV32, ROM, RAM, UART, Timer, GPIO.
+1. Hoàn thiện kiến trúc SoC gồm PicoRV32, ROM, RAM, UART, SPI, GPIO.
 2. Thiết kế bus/interconnect đơn giản bằng address decoder để định tuyến truy cập MMIO.
-3. Tích hợp low power bằng CMU và clock gating cho UART/Timer/GPIO.
+3. Tích hợp low power bằng CMU và clock gating cho UART/SPI/GPIO.
 4. Kết nối hoàn chỉnh ở mức top-level RTL và kiểm chứng bằng mô phỏng.
 
 ## 2. Việc đã làm
@@ -27,7 +27,7 @@
   - RAM: `rtl/soc_ram.v`
 - Ngoại vi MMIO:
   - UART: `rtl/uart_mmio.v`
-  - Timer + IRQ: `rtl/timer_mmio.v`
+  - SPI + IRQ: `rtl/spi_mmio.v`
   - GPIO: `rtl/gpio_mmio.v`
 
 ### 2.3. Kiểm chứng RTL và chức năng
@@ -45,7 +45,7 @@
 ## 3. Kết quả đạt được
 1. SoC RTL tích hợp hoàn chỉnh đã hình thành.
 2. Clock gating hoạt động đúng theo điều khiển CMU (enable/disable/selective re-enable).
-3. Timer interrupt được kiểm chứng assert/clear trong mô phỏng.
+3. SPI interrupt được kiểm chứng assert/clear trong mô phỏng.
 4. CPU PicoRV32 chạy được firmware tự tạo trên map địa chỉ của hệ thống và điều khiển UART/GPIO thành công.
 
 ## 4. Bằng chứng
@@ -57,7 +57,7 @@
 6. Firmware image nạp ROM: `fw/firmware.hex`
 
 ## 5. Kế hoạch tuần tới
-1. Bắt đầu Giai đoạn 3: viết firmware đầy đủ (UART Hello, GPIO control, timer interrupt service).
+1. Bắt đầu Giai đoạn 3: viết firmware đầy đủ (UART Hello, GPIO control, SPI interrupt service).
 2. Viết testbench SoC đầy đủ với kịch bản kiểm chứng low power có số liệu waveform cụ thể.
 3. Chuẩn bị script tổng hợp report tự động từ log mô phỏng để phục vụ báo cáo đồ án.
 4. Bổ sung lint/check coding style cho RTL để giảm rủi ro khi sang synthesis.

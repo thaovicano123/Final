@@ -51,7 +51,7 @@ Run command:
 - `./scripts/run_phase3_firmware_focus_tb.sh`
 
 Automatically checked items:
-1. Timer configuration register correctness (`LOAD=2000`, `CTRL=0x7`).
+1. SPI configuration register correctness (`CTRL=0x23`, `DIV=2`).
 2. IRQ servicing evidence from RAM variable (`irq_count`) increasing.
 3. Foreground/background behavior split on GPIO:
    - foreground: `gpio_out[0]` toggles from main loop
@@ -71,7 +71,7 @@ Automatically checked items:
    - Phase C: `clk_en = 3'b100`
 2. Gated-clock behavior from waveform/toggle counters:
    - Phase B: all peripheral gated clocks stop
-   - Phase C: only GPIO gated clock resumes (UART/TIMER remain gated)
+   - Phase C: only GPIO gated clock resumes (UART/SPI remain gated)
 3. Functional effect on firmware activity:
    - GPIO foreground toggles pause in Phase B and resume in Phase C
 

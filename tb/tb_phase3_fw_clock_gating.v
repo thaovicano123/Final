@@ -7,14 +7,18 @@ module tb_phase3_fw_clock_gating;
     reg [31:0] gpio_in;
     wire uart_tx;
     wire [31:0] gpio_out;
+    wire spi_sclk;
+    wire spi_mosi;
+    wire spi_miso;
+    wire spi_cs_n;
 
     integer fail_count;
     integer gclk_uart_toggle_a;
     integer gclk_uart_toggle_b;
     integer gclk_uart_toggle_c;
-    integer gclk_timer_toggle_a;
-    integer gclk_timer_toggle_b;
-    integer gclk_timer_toggle_c;
+    integer gclk_spi_toggle_a;
+    integer gclk_spi_toggle_b;
+    integer gclk_spi_toggle_c;
     integer gclk_gpio_toggle_a;
     integer gclk_gpio_toggle_b;
     integer gclk_gpio_toggle_c;
@@ -28,6 +32,8 @@ module tb_phase3_fw_clock_gating;
 
     reg [1:0] phase;
 
+    assign spi_miso = 1'b0;
+
     soc_top #(
         .MEMFILE("fw/firmware_gating.hex")
     ) dut (
@@ -35,6 +41,10 @@ module tb_phase3_fw_clock_gating;
         .resetn(resetn),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx),
+        .spi_sclk(spi_sclk),
+        .spi_mosi(spi_mosi),
+        .spi_miso(spi_miso),
+        .spi_cs_n(spi_cs_n),
         .gpio_in(gpio_in),
         .gpio_out(gpio_out)
     );
@@ -76,12 +86,12 @@ module tb_phase3_fw_clock_gating;
         end
     end
 
-    always @(dut.u_cmu.gclk_timer) begin
+    always @(dut.u_cmu.gclk_spi) begin
         if (resetn) begin
             case (phase)
-                PHASE_A: gclk_timer_toggle_a = gclk_timer_toggle_a + 1;
-                PHASE_B: gclk_timer_toggle_b = gclk_timer_toggle_b + 1;
-                PHASE_C: gclk_timer_toggle_c = gclk_timer_toggle_c + 1;
+                PHASE_A: gclk_spi_toggle_a = gclk_spi_toggle_a + 1;
+                PHASE_B: gclk_spi_toggle_b = gclk_spi_toggle_b + 1;
+                PHASE_C: gclk_spi_toggle_c = gclk_spi_toggle_c + 1;
             endcase
         end
     end
@@ -116,9 +126,9 @@ module tb_phase3_fw_clock_gating;
         gclk_uart_toggle_a = 0;
         gclk_uart_toggle_b = 0;
         gclk_uart_toggle_c = 0;
-        gclk_timer_toggle_a = 0;
-        gclk_timer_toggle_b = 0;
-        gclk_timer_toggle_c = 0;
+        gclk_spi_toggle_a = 0;
+        gclk_spi_toggle_b = 0;
+        gclk_spi_toggle_c = 0;
         gclk_gpio_toggle_a = 0;
         gclk_gpio_toggle_b = 0;
         gclk_gpio_toggle_c = 0;
@@ -138,21 +148,21 @@ module tb_phase3_fw_clock_gating;
         repeat (350000) @(posedge clk);
 
         $display("[INFO] Toggle counts:");
-        $display("  PhaseA gclk(u,t,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_a, gclk_timer_toggle_a, gclk_gpio_toggle_a, gpio_toggle_a);
-        $display("  PhaseB gclk(u,t,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_b, gclk_timer_toggle_b, gclk_gpio_toggle_b, gpio_toggle_b);
-        $display("  PhaseC gclk(u,t,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_c, gclk_timer_toggle_c, gclk_gpio_toggle_c, gpio_toggle_c);
+        $display("  PhaseA gclk(u,s,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_a, gclk_spi_toggle_a, gclk_gpio_toggle_a, gpio_toggle_a);
+        $display("  PhaseB gclk(u,s,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_b, gclk_spi_toggle_b, gclk_gpio_toggle_b, gpio_toggle_b);
+        $display("  PhaseC gclk(u,s,g)=(%0d,%0d,%0d) gpio0=%0d", gclk_uart_toggle_c, gclk_spi_toggle_c, gclk_gpio_toggle_c, gpio_toggle_c);
 
         check_true("Phase transitions reached", (phase == PHASE_C));
         check_true("Phase A UART gclk active", gclk_uart_toggle_a > 10);
-        check_true("Phase A TIMER gclk active", gclk_timer_toggle_a > 10);
+        check_true("Phase A SPI gclk active", gclk_spi_toggle_a > 10);
         check_true("Phase A GPIO gclk active", gclk_gpio_toggle_a > 10);
 
         check_true("Phase B UART gclk stopped", gclk_uart_toggle_b < 3);
-        check_true("Phase B TIMER gclk stopped", gclk_timer_toggle_b < 3);
+        check_true("Phase B SPI gclk stopped", gclk_spi_toggle_b < 3);
         check_true("Phase B GPIO gclk stopped", gclk_gpio_toggle_b < 3);
 
         check_true("Phase C UART remains gated", gclk_uart_toggle_c < 3);
-        check_true("Phase C TIMER remains gated", gclk_timer_toggle_c < 3);
+        check_true("Phase C SPI remains gated", gclk_spi_toggle_c < 3);
         check_true("Phase C GPIO gclk resumes", gclk_gpio_toggle_c > 10);
 
         check_true("Phase A foreground GPIO toggles", gpio_toggle_a > 5);

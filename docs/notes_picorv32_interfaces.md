@@ -36,7 +36,7 @@
 
 ### Which option I choose for this project and why
 - Choose native interface (`picorv32`) for this student SoC because it reduces bus complexity and speeds up bring-up.
-- A simple address decoder is enough for ROM/RAM/UART/Timer/GPIO.
+- A simple address decoder is enough for ROM/RAM/UART/SPI/GPIO.
 - If integrating with existing AXI subsystem later, add `picorv32_axi_adapter`.
 
 ## 3) Interrupts (IRQ)
@@ -44,14 +44,14 @@
 ### Core behavior
 - `irq` input: 32-bit pending interrupt bitmap into core.
 - `eoi` output: End-Of-Interrupt indicator for IRQ(s) being handled.
-- Internal IRQ 0: timer interrupt.
+- Internal IRQ 0: SPI interrupt.
 - Internal IRQ 1: EBREAK/ECALL or illegal instruction.
 - Internal IRQ 2: bus error (unaligned memory access).
 
 ### Firmware handling idea
 - Enable IRQ support with `ENABLE_IRQ=1`.
 - Use assembly wrapper to save context and call C handler.
-- C handler reads pending source mask, services timer/UART/GPIO, then returns via IRQ return sequence.
+- C handler reads pending source mask, services SPI/UART/GPIO, then returns via IRQ return sequence.
 
 ## 4) Integration Decision
 
@@ -59,13 +59,13 @@
 - `0x0000_0000` - ROM (firmware image)
 - `0x1000_0000` - RAM
 - `0x2000_0000` - UART
-- `0x2000_1000` - Timer
+- `0x2000_1000` - SPI
 - `0x2000_2000` - GPIO
 - `0x2000_3000` - CMU/clock-gating control registers
 
 ### Peripheral gating policy assumptions
 - Keep CPU core clock ungated in phase 2 baseline.
-- Gate peripheral clocks (UART/Timer/GPIO) using enable bits in CMU register map.
+- Gate peripheral clocks (UART/SPI/GPIO) using enable bits in CMU register map.
 - Default enable after reset for debug visibility, then firmware disables unused blocks.
 - Verify gated clocks remain static low in simulation when disabled.
 

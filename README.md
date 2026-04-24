@@ -30,10 +30,11 @@ See details in:
 
 ## Synthesis compare (Phase 4)
 - Install Yosys.
-- Run: `./scripts/run_synth_compare.sh`
-- This generates two synthesis results:
-	- with inferred ROM/RAM included
-	- with ROM/RAM blackboxed (logic-focused comparison)
+- Run: `./scripts/run_phase4_clock_gating_compare.sh`
+- This generates two synthesis cases:
+	- Case A: no clock gating (ICG bypass)
+	- Case B: with clock gating (ICG enabled)
+- Summary table: `results/syn/phase4_compare_summary.md`
 
 ## Firmware verification (Phase 3)
 - Firmware-focused function checks:

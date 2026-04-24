@@ -8,7 +8,7 @@ module cmu (
     output wire        ready,
     output reg  [31:0] rdata,
     output wire        gclk_uart,
-    output wire        gclk_timer,
+    output wire        gclk_spi,
     output wire        gclk_gpio,
     output wire [2:0]  clk_en_state
 );
@@ -55,12 +55,12 @@ module cmu (
         .gclk(gclk_uart)
     );
 
-    icg_cell u_icg_timer (
+    icg_cell u_icg_spi (
         .clk(clk),
         .resetn(resetn),
         .en(clk_en[1]),
         .test_en(1'b0),
-        .gclk(gclk_timer)
+        .gclk(gclk_spi)
     );
 
     icg_cell u_icg_gpio (

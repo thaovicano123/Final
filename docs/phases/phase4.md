@@ -24,12 +24,21 @@ Gate-level synthesis reports with and without clock gating, and quantified power
 3. This keeps power comparison focused on CPU + interconnect + gated peripherals.
 
 ## Execution commands (Yosys)
-1. `./scripts/run_synth_compare.sh`
-2. Outputs:
-   - `results/syn/with_memory/stat.txt`
-   - `results/syn/blackbox_memory/stat.txt`
-   - `results/syn/with_memory/yosys.log`
-   - `results/syn/blackbox_memory/yosys.log`
+1. `./scripts/run_phase4_clock_gating_compare.sh`
+2. Cases:
+   - Case A (no clock gating): `syn/yosys_phase4_no_gating.ys`
+   - Case B (with clock gating): `syn/yosys_phase4_with_gating.ys`
+3. Outputs:
+   - `results/syn/phase4_no_gating/stat.txt`
+   - `results/syn/phase4_with_gating/stat.txt`
+   - `results/syn/phase4_no_gating/yosys.log`
+   - `results/syn/phase4_with_gating/yosys.log`
+   - `results/syn/phase4_compare_summary.md`
+
+## Current verification scope
+1. Structural synthesis comparison is automated and reproducible in open-source flow.
+2. Memory is blackboxed in both cases to isolate logic-domain impact.
+3. Technology-signoff power/timing numbers require liberty + full STA/power tools.
 
 ## Exit criteria
 - Both synthesis runs complete

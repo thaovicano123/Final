@@ -15,34 +15,41 @@ module tb_phase2_mmio_irq_gating;
     wire sel_rom;
     wire sel_ram;
     wire sel_uart;
-    wire sel_timer;
+    wire sel_spi;
     wire sel_gpio;
     wire sel_cmu;
     wire sel_none;
 
     wire gclk_uart;
-    wire gclk_timer;
+    wire gclk_spi;
     wire gclk_gpio;
     wire [2:0] clk_en_state;
 
     wire uart_ready;
     wire [31:0] uart_rdata;
-    wire timer_ready;
-    wire [31:0] timer_rdata;
+    wire spi_ready;
+    wire [31:0] spi_rdata;
     wire gpio_ready;
     wire [31:0] gpio_rdata;
     wire cmu_ready;
     wire [31:0] cmu_rdata;
 
-    wire timer_irq;
+    wire spi_irq;
+
+    wire spi_sclk;
+    wire spi_mosi;
+    wire spi_miso;
+    wire spi_cs_n;
 
     reg [31:0] gpio_in;
     wire [31:0] gpio_out;
 
     integer error_count;
 
+    assign spi_miso = 1'b0;
+
     localparam UART_BASE  = 32'h2000_0000;
-    localparam TIMER_BASE = 32'h2000_1000;
+    localparam SPI_BASE   = 32'h2000_1000;
     localparam GPIO_BASE  = 32'h2000_2000;
     localparam CMU_BASE   = 32'h2000_3000;
 
@@ -51,20 +58,20 @@ module tb_phase2_mmio_irq_gating;
         .sel_rom(sel_rom),
         .sel_ram(sel_ram),
         .sel_uart(sel_uart),
-        .sel_timer(sel_timer),
+        .sel_spi(sel_spi),
         .sel_gpio(sel_gpio),
         .sel_cmu(sel_cmu),
         .sel_none(sel_none)
     );
 
     assign bus_ready = (sel_uart  && uart_ready) |
-                       (sel_timer && timer_ready) |
+                       (sel_spi   && spi_ready) |
                        (sel_gpio  && gpio_ready) |
                        (sel_cmu   && cmu_ready) |
                        (sel_none  && bus_valid);
 
     assign bus_rdata = sel_uart  ? uart_rdata  :
-                       sel_timer ? timer_rdata :
+                       sel_spi   ? spi_rdata  :
                        sel_gpio  ? gpio_rdata  :
                        sel_cmu   ? cmu_rdata   : 32'h0000_0000;
 
@@ -78,7 +85,7 @@ module tb_phase2_mmio_irq_gating;
         .ready(cmu_ready),
         .rdata(cmu_rdata),
         .gclk_uart(gclk_uart),
-        .gclk_timer(gclk_timer),
+        .gclk_spi(gclk_spi),
         .gclk_gpio(gclk_gpio),
         .clk_en_state(clk_en_state)
     );
@@ -96,16 +103,20 @@ module tb_phase2_mmio_irq_gating;
         .uart_rx(1'b1)
     );
 
-    timer_mmio u_timer (
-        .clk(gclk_timer),
+    spi_mmio u_spi (
+        .clk(gclk_spi),
         .resetn(resetn),
-        .valid(bus_valid && sel_timer),
+        .valid(bus_valid && sel_spi),
         .addr(bus_addr),
         .wdata(bus_wdata),
         .wstrb(bus_wstrb),
-        .ready(timer_ready),
-        .rdata(timer_rdata),
-        .irq(timer_irq)
+        .ready(spi_ready),
+        .rdata(spi_rdata),
+        .spi_sclk(spi_sclk),
+        .spi_mosi(spi_mosi),
+        .spi_miso(spi_miso),
+        .spi_cs_n(spi_cs_n),
+        .irq(spi_irq)
     );
 
     gpio_mmio u_gpio (
@@ -186,7 +197,7 @@ module tb_phase2_mmio_irq_gating;
         begin
             case (which)
                 2'd0: gclk_val = gclk_uart;
-                2'd1: gclk_val = gclk_timer;
+                2'd1: gclk_val = gclk_spi;
                 default: gclk_val = gclk_gpio;
             endcase
         end
@@ -251,44 +262,44 @@ module tb_phase2_mmio_irq_gating;
         end
     endtask
 
-    task automatic test_timer_irq;
+    task automatic test_spi_irq;
         reg [31:0] r;
         integer i;
         reg irq_seen;
         begin
-            $display("\n== Test Timer IRQ ==");
+            $display("\n== Test SPI IRQ ==");
 
-            // Enable only timer clock to prove isolated gating operation.
+            // Enable only SPI clock to prove isolated gating operation.
             bus_write(CMU_BASE + 32'h00, 32'h0000_0002);
 
-            bus_write(TIMER_BASE + 32'h00, 32'd5); // LOAD
-            bus_write(TIMER_BASE + 32'h04, 32'd3); // VALUE
-            bus_write(TIMER_BASE + 32'h08, 32'h0000_0003); // enable + irq_en
+            bus_write(SPI_BASE + 32'h04, 32'd2); // DIV
+            bus_write(SPI_BASE + 32'h00, 32'h0000_0023); // enable + irq_en + cs_en
+            bus_write(SPI_BASE + 32'h08, 32'h0000_00A5); // TXDATA
 
             irq_seen = 1'b0;
             for (i = 0; i < 50; i = i + 1) begin
                 @(posedge clk);
-                if (timer_irq)
+                if (spi_irq)
                     irq_seen = 1'b1;
             end
 
             if (!irq_seen) begin
-                $display("[FAIL] TIMER_IRQ not asserted in timeout window");
+                $display("[FAIL] SPI_IRQ not asserted in timeout window");
                 error_count = error_count + 1;
             end else begin
-                $display("[PASS] TIMER_IRQ asserted");
+                $display("[PASS] SPI_IRQ asserted");
             end
 
-            bus_read(TIMER_BASE + 32'h0C, r);
-            expect_eq(r[0], 32'h1, "TIMER_IRQ_STATUS_BIT");
+            bus_read(SPI_BASE + 32'h10, r);
+            expect_eq(r[2], 32'h1, "SPI_IRQ_STATUS_BIT");
 
-            bus_write(TIMER_BASE + 32'h0C, 32'h0000_0001); // clear pending
+            bus_write(SPI_BASE + 32'h10, 32'h0000_0004); // clear pending
             @(posedge clk);
-            if (timer_irq) begin
-                $display("[FAIL] TIMER_IRQ not cleared");
+            if (spi_irq) begin
+                $display("[FAIL] SPI_IRQ not cleared");
                 error_count = error_count + 1;
             end else begin
-                $display("[PASS] TIMER_IRQ cleared");
+                $display("[PASS] SPI_IRQ cleared");
             end
         end
     endtask
@@ -302,17 +313,17 @@ module tb_phase2_mmio_irq_gating;
             expect_eq(r, 32'h0000_0007, "CMU_RESET_CLK_EN");
 
             check_gclk_activity(2'd0, 20, 1'b1, "GCLK_UART_INITIAL");
-            check_gclk_activity(2'd1, 20, 1'b1, "GCLK_TIMER_INITIAL");
+            check_gclk_activity(2'd1, 20, 1'b1, "GCLK_SPI_INITIAL");
             check_gclk_activity(2'd2, 20, 1'b1, "GCLK_GPIO_INITIAL");
 
             bus_write(CMU_BASE + 32'h00, 32'h0000_0000);
             check_gclk_activity(2'd0, 20, 1'b0, "GCLK_UART_DISABLED");
-            check_gclk_activity(2'd1, 20, 1'b0, "GCLK_TIMER_DISABLED");
+            check_gclk_activity(2'd1, 20, 1'b0, "GCLK_SPI_DISABLED");
             check_gclk_activity(2'd2, 20, 1'b0, "GCLK_GPIO_DISABLED");
 
             bus_write(CMU_BASE + 32'h00, 32'h0000_0005); // uart + gpio on
             check_gclk_activity(2'd0, 20, 1'b1, "GCLK_UART_REENABLED");
-            check_gclk_activity(2'd1, 20, 1'b0, "GCLK_TIMER_STILL_OFF");
+            check_gclk_activity(2'd1, 20, 1'b0, "GCLK_SPI_STILL_OFF");
             check_gclk_activity(2'd2, 20, 1'b1, "GCLK_GPIO_REENABLED");
         end
     endtask
@@ -339,7 +350,7 @@ module tb_phase2_mmio_irq_gating;
         // Re-enable all clocks for functional MMIO tests.
         bus_write(CMU_BASE + 32'h00, 32'h0000_0007);
         test_mmio_gpio_uart();
-        test_timer_irq();
+        test_spi_irq();
 
         if (error_count == 0) begin
             $display("\n========================================");

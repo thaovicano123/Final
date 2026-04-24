@@ -56,10 +56,10 @@ Các bằng chứng lưu trong workspace:
 
 ## 5. Kế hoạch tuần tới (bắt đầu Giai đoạn 2)
 Trong tuần tới, nhóm sẽ chuyển sang Giai đoạn 2 với các đầu việc cụ thể:
-1. Chốt block diagram SoC gồm PicoRV32, ROM, RAM, UART, Timer, GPIO, CMU.
+1. Chốt block diagram SoC gồm PicoRV32, ROM, RAM, UART, SPI, GPIO, CMU.
 2. Xây dựng address map chính thức cho toàn hệ thống.
 3. Viết RTL cho bus/address decoder và khung top-level SoC.
-4. Xác định và tài liệu hóa policy clock gating cho UART/Timer/GPIO.
+4. Xác định và tài liệu hóa policy clock gating cho UART/SPI/GPIO.
 5. Chuẩn bị testbench mức hệ thống để verify chức năng đọc/ghi thanh ghi ngoại vi.
 
 ## 6. Kết luận

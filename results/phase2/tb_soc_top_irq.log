@@ -1,4 +1,4 @@
 VCD info: dumpfile results/phase2/tb_soc_top_irq.vcd opened for output.
 Phase3 IRQ demo
-SOC_TOP_IRQ: PASS (irq_gpio_toggles=198)
-tb/tb_soc_top_irq.v:58: $finish called at 2000075000 (1ps)
+SOC_TOP_IRQ: PASS (irq_gpio_toggles=28)
+tb/tb_soc_top_irq.v:67: $finish called at 2000075000 (1ps)

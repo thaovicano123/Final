@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#define TIMER_BASE  0x20001000u
+#define SPI_BASE    0x20001000u
 #define GPIO_BASE   0x20002000u
 #define CMU_BASE    0x20003000u
 
@@ -11,9 +11,9 @@
 #define GPIO_DIR      0x08u
 #define GPIO_TOGGLE   0x0Cu
 
-#define TIMER_LOAD    0x00u
-#define TIMER_VALUE   0x04u
-#define TIMER_CTRL    0x08u
+#define SPI_CTRL      0x00u
+#define SPI_DIV       0x04u
+#define SPI_TXDATA    0x08u
 
 static inline void mmio_write(uint32_t addr, uint32_t value)
 {
@@ -40,15 +40,15 @@ int main(void)
     // Phase A: enable all gated clocks.
     mmio_write(CMU_BASE + CMU_CLK_EN, 0x00000007u);
 
-    // Configure GPIO bit0 output and keep timer disabled.
+    // Configure GPIO bit0 output and keep SPI idle until transfers start.
     mmio_write(GPIO_BASE + GPIO_DIR, 0x00000001u);
     mmio_write(GPIO_BASE + GPIO_DATA_OUT, 0x00000000u);
-    mmio_write(TIMER_BASE + TIMER_LOAD, 1000u);
-    mmio_write(TIMER_BASE + TIMER_VALUE, 1000u);
-    mmio_write(TIMER_BASE + TIMER_CTRL, 0x00000000u);
+    mmio_write(SPI_BASE + SPI_DIV, 2u);
+    mmio_write(SPI_BASE + SPI_CTRL, 0x00000021u); // enable + cs_en
 
     for (i = 0; i < 24u; i++) {
         mmio_write(GPIO_BASE + GPIO_TOGGLE, 0x00000001u);
+        mmio_write(SPI_BASE + SPI_TXDATA, 0x000000A5u);
         busy_delay(40u);
     }
 

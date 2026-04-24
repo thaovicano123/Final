@@ -1,16 +1,16 @@
 #include <stdint.h>
 
 #define UART_BASE   0x20000000u
-#define TIMER_BASE  0x20001000u
+#define SPI_BASE    0x20001000u
 #define GPIO_BASE   0x20002000u
 #define CMU_BASE    0x20003000u
 
 #define UART_TXDATA   0x00u
 
-#define TIMER_LOAD    0x00u
-#define TIMER_VALUE   0x04u
-#define TIMER_CTRL    0x08u
-#define TIMER_IRQCLR  0x0Cu
+#define SPI_CTRL      0x00u
+#define SPI_DIV       0x04u
+#define SPI_TXDATA    0x08u
+#define SPI_STATUS    0x10u
 
 #define GPIO_DATA_OUT 0x00u
 #define GPIO_DATA_IN  0x04u
@@ -56,15 +56,15 @@ int main(void)
 
     uart_puts("Phase3 IRQ demo\n");
 
-    // Timer periodic IRQ setup.
-    mmio_write(TIMER_BASE + TIMER_LOAD, 2000u);
-    mmio_write(TIMER_BASE + TIMER_VALUE, 2000u);
-    mmio_write(TIMER_BASE + TIMER_IRQCLR, 1u);    // clear pending
-    mmio_write(TIMER_BASE + TIMER_CTRL, 0x00000007u); // enable + irq_en + periodic
+    // SPI IRQ setup: enable + irq_en + cs_en, low divider.
+    mmio_write(SPI_BASE + SPI_DIV, 2u);
+    mmio_write(SPI_BASE + SPI_CTRL, 0x00000023u);
+    mmio_write(SPI_BASE + SPI_STATUS, 0x00000004u); // clear pending
 
     while (1) {
         // Main loop toggles GPIO bit0 to show foreground progress.
         mmio_write(GPIO_BASE + GPIO_TOGGLE, 0x00000001u);
+        mmio_write(SPI_BASE + SPI_TXDATA, 0x0000005Au);
         for (i = 0; i < 500u; i++) {
             (void)mmio_read(GPIO_BASE + GPIO_DATA_IN);
         }

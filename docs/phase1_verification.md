@@ -45,7 +45,7 @@ Date: 2026-04-18
 - Can run `iverilog` and `vvp` without errors: PASS
 - Can open waveforms by `gtkwave`: PASS (tool installed, VCD generated)
 - PicoRV32 sample simulation runs end-to-end: PASS
-- Can explain where clock gating should be inserted in SoC: PASS (peripheral clocks in UART/Timer/GPIO via CMU)
+- Can explain where clock gating should be inserted in SoC: PASS (peripheral clocks in UART/SPI/GPIO via CMU)
 
 ## Conclusion
 Phase 1 is complete.

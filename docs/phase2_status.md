@@ -8,7 +8,7 @@
 - `rtl/soc_rom.v`
 - `rtl/soc_ram.v`
 - `rtl/uart_mmio.v`
-- `rtl/timer_mmio.v`
+- `rtl/spi_mmio.v`
 - `rtl/gpio_mmio.v`
 
 ## Implemented verification and build scripts
@@ -34,7 +34,7 @@
 ## What is completed vs. phase-2 tasks
 1. Block diagram: completed
 2. Address decoder/interconnect: completed
-3. CMU + ICG for UART/Timer/GPIO: completed
+3. CMU + ICG for UART/SPI/GPIO: completed
 4. Top-level SoC wrapper integration: completed
 
 ## Verification done
@@ -63,8 +63,8 @@
 1. MMIO read/write:
   - GPIO DATA_OUT, GPIO TOGGLE, GPIO DATA_IN
   - UART TXDATA write/readback model
-2. Timer IRQ:
-  - Timer configuration
+2. SPI IRQ:
+  - SPI configuration
   - IRQ assertion check
   - IRQ status check and clear flow
 3. Clock gating verification:
@@ -76,12 +76,12 @@
   - Firmware writes UART text output
   - Firmware toggles GPIO in a loop
 5. CPU+IRQ integration smoke:
-  - Timer periodic IRQ configured by firmware
+  - SPI IRQ configured by firmware
   - IRQ vector at `0x00000010` executes custom `retirq` flow
-  - ISR toggles GPIO bit[8] and clears timer pending status
+  - ISR toggles GPIO bit[8] and clears SPI pending status
 
 ## Next optimization-focused actions
 1. Add SoC-level testbench in `tb/` for MMIO and IRQ behavior.
 2. Add waveform checks proving gated clocks stop when CMU bits are cleared.
-3. Add simple firmware for this address map to drive UART/GPIO/Timer end-to-end.
+3. Add simple firmware for this address map to drive UART/GPIO/SPI end-to-end.
 4. Run lint (if available) and clean up any style/synthesis warnings.

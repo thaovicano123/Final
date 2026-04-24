@@ -7,6 +7,10 @@ module tb_phase3_firmware_focus;
     reg [31:0] gpio_in;
     wire uart_tx;
     wire [31:0] gpio_out;
+    wire spi_sclk;
+    wire spi_mosi;
+    wire spi_miso;
+    wire spi_cs_n;
 
     integer cycles;
     integer gpio_fg_toggles;
@@ -26,6 +30,10 @@ module tb_phase3_firmware_focus;
         .resetn(resetn),
         .uart_rx(uart_rx),
         .uart_tx(uart_tx),
+        .spi_sclk(spi_sclk),
+        .spi_mosi(spi_mosi),
+        .spi_miso(spi_miso),
+        .spi_cs_n(spi_cs_n),
         .gpio_in(gpio_in),
         .gpio_out(gpio_out)
     );
@@ -51,6 +59,8 @@ module tb_phase3_firmware_focus;
         resetn = 1'b0;
         uart_rx = 1'b1;
         gpio_in = 32'hCAFE_BABE;
+        // Tie MISO low for deterministic SPI reads.
+        force spi_miso = 1'b0;
 
         cycles = 0;
         gpio_fg_toggles = 0;
@@ -72,8 +82,8 @@ module tb_phase3_firmware_focus;
         // Let firmware complete MMIO setup sequence.
         repeat (3000) @(posedge clk);
 
-        check_eq("TIMER_LOAD", dut.u_timer.load_reg, 32'd2000);
-        check_eq("TIMER_CTRL", {29'd0, dut.u_timer.ctrl_reg}, 32'h0000_0007);
+        check_eq("SPI_CTRL", {26'd0, dut.u_spi.ctrl_reg[5:0]}, 32'h0000_0023);
+        check_eq("SPI_DIV", dut.u_spi.div_reg, 32'h0000_0002);
         check_eq("GPIO_DIR", dut.u_gpio.dir_reg, 32'h0000_0101);
 
         last_gpio0 = gpio_out[0];

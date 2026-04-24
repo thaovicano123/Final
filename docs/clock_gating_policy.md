@@ -6,7 +6,7 @@ Reduce dynamic power by disabling peripheral clocks when blocks are idle.
 ## Policy
 - CPU clock: always on in Phase 2 baseline.
 - UART clock: controlled by `CMU.CLK_EN[0]`.
-- Timer clock: controlled by `CMU.CLK_EN[1]`.
+- SPI clock: controlled by `CMU.CLK_EN[1]`.
 - GPIO clock: controlled by `CMU.CLK_EN[2]`.
 
 ## Reset behavior
@@ -21,4 +21,4 @@ Reduce dynamic power by disabling peripheral clocks when blocks are idle.
 ## Verification checklist
 - Write `CMU.CLK_EN` bit = 0 -> corresponding gated clock stops toggling.
 - Write bit = 1 -> gated clock resumes toggling.
-- UART/Timer/GPIO register activity should pause while their clocks are gated.
+- UART/SPI/GPIO register activity should pause while their clocks are gated.

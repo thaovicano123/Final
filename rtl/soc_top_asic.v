@@ -1,5 +1,7 @@
-module soc_top #(
-    parameter MEMFILE = ""
+module soc_top_asic #(
+    parameter MEMFILE = "",
+    parameter ROM_ADDR_WIDTH = 8,
+    parameter RAM_ADDR_WIDTH = 8
 ) (
     input  wire        clk,
     input  wire        resetn,
@@ -97,7 +99,8 @@ module soc_top #(
 
     soc_rom #(
         .MEMFILE(MEMFILE),
-        .ADDR_WIDTH(14)
+        .ADDR_WIDTH(ROM_ADDR_WIDTH),
+        .INIT_NOP(0)
     ) u_rom (
         .valid(mem_valid && sel_rom),
         .addr (mem_addr),
@@ -106,7 +109,8 @@ module soc_top #(
     );
 
     soc_ram #(
-        .ADDR_WIDTH(14)
+        .ADDR_WIDTH(RAM_ADDR_WIDTH),
+        .INIT_ZERO(0)
     ) u_ram (
         .clk  (clk),
         .resetn(resetn),

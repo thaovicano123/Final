@@ -2,7 +2,7 @@
 # ROM/RAM are intentionally excluded from logic cost accounting.
 
 read_verilog third_party/picorv32/picorv32.v
-read_verilog rtl/icg_cell.v rtl/cmu.v rtl/bus_decoder.v rtl/uart_mmio.v rtl/timer_mmio.v rtl/gpio_mmio.v rtl/soc_top.v
+read_verilog rtl/icg_cell.v rtl/cmu.v rtl/bus_decoder.v rtl/uart_mmio.v rtl/spi_mmio.v rtl/gpio_mmio.v rtl/soc_top.v
 read_verilog -lib syn/mem_blackbox_cells.v
 
 hierarchy -check -top soc_top

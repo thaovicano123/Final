@@ -42,7 +42,7 @@ git clone https://github.com/YosysHQ/picorv32.git
 - IRQ essentials:
   - 32-bit `irq` input bitmap
   - `eoi` indicates end of serviced interrupt(s)
-  - built-in IRQs include timer, illegal/ebreak/ecall, bus error
+  - built-in IRQs include SPI (SoC-level), illegal/ebreak/ecall, bus error
 
 ## Deliverables for this task
 - `docs/notes_picorv32_interfaces.md` (your notes)
