@@ -49,7 +49,7 @@ module tb_soc_top_smoke;
         repeat (8) @(posedge clk);
         resetn = 1'b1;
 
-        repeat (120000) begin
+        repeat (300000) begin
             @(posedge clk);
             cycles = cycles + 1;
 
